@@ -1,28 +1,29 @@
 const screenBounds = document.getElementsByTagName('body')[0].getBoundingClientRect();
-let flyCoords = {top: 100, left: 100};
+let flyCoords = {x: 100, y: 100};
+let delta = 50;
 
 const changeDirection = (coords) => {
   const goLeft = () => ({
     ...coords,
-    left: coords.left <= 0 ? coords.left : coords.left - 10,
+    x: coords.x <= 0 ? coords.x : coords.x - delta,
   });
 
   const goRight = () => ({
     ...coords,
-    left: coords.left >= screenBounds.width ? coords.left : coords.left + 10,
+    x: coords.x >= screenBounds.width ? coords.x : coords.x + delta,
   });
 
   const goTop = () => ({
     ...coords,
-    top: coords.top <= 0 ? coords.top : coords.top - 10,
+    y: coords.y <= 0 ? coords.y : coords.y - delta,
   });
   const goBottom = () => ({
     ...coords,
-    top: coords.top >= screenBounds.height ? coords.top : coords.top + 10,
+    y: coords.y >= screenBounds.height ? coords.y : coords.y + delta,
   });
 
   const directions = [goLeft, goRight, goTop, goBottom];
-  const rndDirectionIdx = Math.round(Math.random()* 3);
+  const rndDirectionIdx = Math.ceil(Math.random()* 3);
 
   return directions[rndDirectionIdx];
 }
@@ -31,8 +32,7 @@ const changeDirection = (coords) => {
 
 const setFlyCoords = (f, c) => {
   console.log('coords', c)
-  f.style.top = `${c.top}px`;
-  f.style.left = `${c.left}px`;
+  f.style.transform = `translate3d(${c.x}px, ${c.y}px, 0)`;
 }
 
 const moveFly = (flyNode) => () => {
