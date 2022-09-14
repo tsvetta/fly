@@ -5,6 +5,7 @@ let flyCoords = {
   y: 200,
   angle: 0,
   radius: 100,
+  scale: 1,
   direction: null,
   atBound: false,
 };
@@ -95,7 +96,7 @@ const changeDirection = (coords) => {
 }
 
 const setFlyCoords = (f, c) => {
-  f.style.transform = `translate3d(${c.x}px, ${c.y}px, 0)`;
+  f.style.transform = `translate3d(${c.x}px, ${c.y}px, 0) scale(${c.scale})`;
 }
 
 const logData = (name, data) => {
@@ -110,20 +111,28 @@ const moveFly = (flyNode) => () => {
   flyCoords.angle = (flyCoords.angle * 10 + Math.PI / 360) % (Math.PI * 2);
   flyCoords = rotate(flyCoords);
 
+  setFlyCoords(flyNode, flyCoords);
+}
+
+const scaleFly = (flyNode) => () => {
+  flyCoords.scale = (flyCoords.scale * 1.1 + Math.PI / 360) % (Math.PI * 2);
+
   logData('Coordinates:', flyCoords);
 
   setFlyCoords(flyNode, flyCoords);
 }
 
 const flyFlies = () => {
-  let fly = document.getElementById('fly');
+  const fly = document.getElementById('fly');
 
   setFlyCoords(fly, flyCoords)
 
   const flyingInterval = setInterval(moveFly(fly), 150);
+  const scalingInterval = setInterval(scaleFly(fly), 150);
 
   // setTimeout(() => {
   //   clearInterval(flyingInterval);
+  //   clearInterval(scalingInterval);
   // }, 10000);
 
 }
