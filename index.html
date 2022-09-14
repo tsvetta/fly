@@ -12,6 +12,13 @@
       margin: 0;
     }
 
+    body {
+      background-image: url('./room.jpg');
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      background-size: cover;
+    }
+
     #ceiling {
       position: relative;
       height: 100%;
@@ -19,14 +26,13 @@
 
     #fly {
       position: absolute;
-      background-color: black;
-      height: 2px;
-      width: 2px;
-      border: 1px solid black;
-      border-radius: 50%;
-      transition: transform .5s;
-      /* transition-timing-function: linear; */
-      transition-timing-function: ease;
+      background-color: transparent;
+      height: 15px;
+      width: 17px;
+      transition: transform .5s linear;
+      background-image: url('./fly.png');
+      background-repeat: no-repeat;
+      background-size: contain;
     }
   </style>
 </head>

@@ -55,6 +55,7 @@ const goTop = (coords) => () => {
       atBound,
     };
   };
+
 const goBottom = (coords) => () => {
   const atBound = coords.y >= screenBounds.height - minDistance;
   return {
@@ -115,7 +116,7 @@ const moveFly = (flyNode) => () => {
 }
 
 const scaleFly = (flyNode) => () => {
-  flyCoords.scale = (flyCoords.scale * 1.1 + Math.PI / 360) % (Math.PI * 2);
+  flyCoords.scale = (flyCoords.scale * 5 + Math.PI / 360) % (Math.PI * 1.1);
 
   logData('Coordinates:', flyCoords);
 
@@ -128,7 +129,7 @@ const flyFlies = () => {
   setFlyCoords(fly, flyCoords)
 
   const flyingInterval = setInterval(moveFly(fly), 150);
-  const scalingInterval = setInterval(scaleFly(fly), 150);
+  const scalingInterval = setInterval(scaleFly(fly), 350);
 
   // setTimeout(() => {
   //   clearInterval(flyingInterval);
