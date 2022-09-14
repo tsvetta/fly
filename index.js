@@ -51,8 +51,8 @@ const directions = (coords) => ({
 });
 
 const changeDirection = (coords) => {
-  const chanceOfNotChangingDirection = Math.ceil(Math.random() * 100);
-  const rndNewDirectionIdx = Math.ceil(Math.random()* 3);
+  const chanceOfNotChangingDirection = Math.round(Math.random() * 100);
+  const rndNewDirectionIdx = Math.floor(Math.random() * 4);
   const directionFnIndex = 1;
 
   console.log('rndNewDirectionIdx', rndNewDirectionIdx)
@@ -60,7 +60,7 @@ const changeDirection = (coords) => {
   if (coords.atBound === true) {
     const directionsWithoutCurrentDirection = { ...directions(coords) };
     delete directionsWithoutCurrentDirection[coords.direction];
-    const rndFilteredDirectionIdx = Math.ceil(Math.random()* 2);
+    const rndFilteredDirectionIdx = Math.floor(Math.random()* 3);
 
     return Object.entries(directionsWithoutCurrentDirection)[rndFilteredDirectionIdx][directionFnIndex];
   }
