@@ -3,9 +3,10 @@ const screenBounds = document.getElementsByTagName('body')[0].getBoundingClientR
 let flyCoords = {
   x: 200,
   y: 200,
-  angle: 0,
   radius: 100,
   scale: 1,
+  trajectoryAngle: 0,
+  rotationAngle: 0,
   direction: null,
   atBound: false,
 };
@@ -13,9 +14,9 @@ let flyCoords = {
 let delta = 100;
 let minDistance = delta + 50;
 
-const rotate = (coords) => {
-  const px = coords.x + coords.radius * Math.cos(coords.angle);
-  const py = coords.y + coords.radius * Math.sin(coords.angle);
+const changeTrajectory = (coords) => {
+  const px = coords.x + coords.radius * Math.cos(coords.trajectoryAngle);
+  const py = coords.y + coords.radius * Math.sin(coords.trajectoryAngle);
   const newRadius = Math.round(Math.random() * 100);
 
   return {
@@ -25,6 +26,20 @@ const rotate = (coords) => {
     y: py,
   }
 }
+
+// const changeRotation = (coords) => {
+//   const newRotationAngle = (coords.rotationAngle * -10 + Math.PI / 360) % (Math.PI * 2);
+//   // Math.sin(coords.trajectoryAngle) * 360;
+
+
+//   console.log('trajectoryAngle', coords.trajectoryAngle);
+//   console.log('newRotationAngle', newRotationAngle * -100);
+
+//   return {
+//     ...coords,
+//     rotationAngle: newRotationAngle * 100,
+//   }
+// }
 
 const goLeft = (coords) => () => {
   const atBound = coords.x <= minDistance;
@@ -97,7 +112,7 @@ const changeDirection = (coords) => {
 }
 
 const setFlyCoords = (f, c) => {
-  f.style.transform = `translate3d(${c.x}px, ${c.y}px, 0) scale(${c.scale})`;
+  f.style.transform = `translate3d(${c.x}px, ${c.y}px, 0) scale(${c.scale}) rotate(${c.rotationAngle}deg)`;
 }
 
 const logData = (name, data) => {
@@ -109,8 +124,9 @@ const logData = (name, data) => {
 
 const moveFly = (flyNode) => () => {
   flyCoords = changeDirection(flyCoords)();
-  flyCoords.angle = (flyCoords.angle * 10 + Math.PI / 360) % (Math.PI * 2);
-  flyCoords = rotate(flyCoords);
+  flyCoords.trajectoryAngle = (flyCoords.trajectoryAngle * 10 + Math.PI / 360) % (Math.PI * 2);
+  flyCoords = changeTrajectory(flyCoords);
+  // flyCoords = changeRotation(flyCoords)
 
   setFlyCoords(flyNode, flyCoords);
 }
