@@ -12,7 +12,7 @@
       margin: 0;
     }
 
-    .ceiling {
+    #ceiling {
       position: relative;
       height: 100%;
     }
@@ -25,11 +25,13 @@
       border: 1px solid black;
       border-radius: 50%;
       transition: transform .5s;
+      /* transition-timing-function: linear; */
+      transition-timing-function: ease;
     }
   </style>
 </head>
 <body>
-  <div class="ceiling">
+  <div id="ceiling">
     <div id="fly" style=""></div>
   </div>
   <script src="./index.js"></script>
