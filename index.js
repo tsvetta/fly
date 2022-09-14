@@ -1,34 +1,79 @@
 const screenBounds = document.getElementsByTagName('body')[0].getBoundingClientRect();
-let flyCoords = {x: 100, y: 100};
-let delta = 50;
+console.log('screenBounds', screenBounds)
+let flyCoords = {x: 200, y: 200, direction: null, atBound: false};
+let delta = 100;
+let minDistance = delta + 50;
+
+const goLeft = (coords) => () => {
+  const atBound = coords.x <= minDistance;
+  return {
+      ...coords,
+      direction: 'left',
+      x: atBound ? minDistance : coords.x - delta,
+      atBound,
+    };
+  };
+
+const goRight = (coords) => () => {
+  const atBound = coords.x >= screenBounds.width - minDistance;
+  return {
+      ...coords,
+      direction: 'right',
+      x: atBound ? screenBounds.width - minDistance : coords.x + delta,
+      atBound,
+    };
+  };
+
+const goTop = (coords) => () => {
+  const atBound = coords.y <= minDistance;
+  return {
+      ...coords,
+      direction: 'top',
+      y: coords.y <= minDistance ? minDistance : coords.y - delta,
+      atBound,
+    };
+  };
+const goBottom = (coords) => () => {
+  const atBound = coords.y >= screenBounds.height - minDistance;
+  return {
+      ...coords,
+      direction: 'bottom',
+      y: atBound ? screenBounds.height - minDistance : coords.y + delta,
+      atBound,
+    };
+  };
+
+const directions = (coords) => ({
+  left: goLeft(coords),
+  right: goRight(coords),
+  top: goTop(coords),
+  bottom: goBottom(coords),
+});
 
 const changeDirection = (coords) => {
-  const goLeft = () => ({
-    ...coords,
-    x: coords.x <= 0 ? coords.x : coords.x - delta,
-  });
+  const chanceOfNotChangingDirection = Math.ceil(Math.random() * 100);
+  const rndNewDirectionIdx = Math.ceil(Math.random()* 3);
+  const directionFnIndex = 1;
 
-  const goRight = () => ({
-    ...coords,
-    x: coords.x >= screenBounds.width ? coords.x : coords.x + delta,
-  });
+  console.log('rndNewDirectionIdx', rndNewDirectionIdx)
 
-  const goTop = () => ({
-    ...coords,
-    y: coords.y <= 0 ? coords.y : coords.y - delta,
-  });
-  const goBottom = () => ({
-    ...coords,
-    y: coords.y >= screenBounds.height ? coords.y : coords.y + delta,
-  });
+  if (coords.atBound === true) {
+    const directionsWithoutCurrentDirection = { ...directions(coords) };
+    delete directionsWithoutCurrentDirection[coords.direction];
+    const rndFilteredDirectionIdx = Math.ceil(Math.random()* 2);
 
-  const directions = [goLeft, goRight, goTop, goBottom];
-  const rndDirectionIdx = Math.ceil(Math.random()* 3);
+    return Object.entries(directionsWithoutCurrentDirection)[rndFilteredDirectionIdx][directionFnIndex];
+  }
 
-  return directions[rndDirectionIdx];
+  const firstMove = coords.direction === null;
+  const luckyChance = chanceOfNotChangingDirection <= 15;
+  if (firstMove || luckyChance) {
+    return Object.entries(directions(coords))[rndNewDirectionIdx][directionFnIndex];
+  }
+
+  // return the same direction
+  return directions(coords)[coords.direction];
 }
-
-
 
 const setFlyCoords = (f, c) => {
   console.log('coords', c)
@@ -36,6 +81,7 @@ const setFlyCoords = (f, c) => {
 }
 
 const moveFly = (flyNode) => () => {
+  // debugger
   flyCoords = changeDirection(flyCoords)();
 
   setFlyCoords(flyNode, flyCoords);
@@ -46,7 +92,7 @@ const flyFlies = () => {
 
   setFlyCoords(fly, flyCoords)
 
-  const flyingInterval = setInterval(moveFly(fly), 500);
+  const flyingInterval = setInterval(moveFly(fly), 200);
 
   // setTimeout(() => {
   //   clearInterval(flyingInterval);
