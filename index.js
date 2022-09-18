@@ -1,3 +1,8 @@
+// logger.debug | info | warn | error (message: string, messageContext = Context)
+const logToDatadog = (message = '', type = 'logger', options = {}) => {
+  window.DD_LOGS && DD_LOGS.logger[type](message, options);
+}
+
 const screenBounds = document.getElementsByTagName('body')[0].getBoundingClientRect();
 
 let flyCoords = {
@@ -115,8 +120,8 @@ const setFlyCoords = (f, c) => {
   f.style.transform = `translate3d(${c.x}px, ${c.y}px, 0) scale(${c.scale}) rotate(${c.rotationAngle}deg)`;
 }
 
-const logData = (name, data) => {
-  console.clear()
+const logConsoleData = (name, data) => {
+  // console.clear()
   console.group(name);
   console.table(data);
   console.groupEnd();
@@ -134,7 +139,7 @@ const moveFly = (flyNode) => () => {
 const scaleFly = (flyNode) => () => {
   flyCoords.scale = (flyCoords.scale * 5 + Math.PI / 360) % (Math.PI * 1.1);
 
-  logData('Coordinates:', flyCoords);
+  logConsoleData('Coordinates:', flyCoords);
 
   setFlyCoords(flyNode, flyCoords);
 }
@@ -146,6 +151,8 @@ const flyFlies = () => {
 
   const flyingInterval = setInterval(moveFly(fly), 150);
   const scalingInterval = setInterval(scaleFly(fly), 350);
+
+  logToDatadog('Fly is flying!', 'info');
 
   // const timer = setTimeout(() => {
   //   clearInterval(flyingInterval);
