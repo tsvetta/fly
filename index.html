@@ -33,6 +33,11 @@
         height: 15px;
         width: 17px;
         transition: transform 0.5s linear;
+      }
+
+      .fly-body {
+        height: 100%;
+        width: 100%;
         background-image: url("./fly.png");
         background-repeat: no-repeat;
         background-size: contain;
@@ -64,7 +69,9 @@
   </head>
   <body>
     <div id="ceiling">
-      <div id="fly" style=""></div>
+      <div id="fly" style="">
+        <div class="fly-body"></div>
+      </div>
     </div>
     <script src="./index.js"></script>
   </body>
