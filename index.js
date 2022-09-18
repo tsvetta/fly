@@ -112,8 +112,28 @@ const scaleFly = () => {
 }
 
 const changeTrajectory = () => {
-  const px = flyCoords.x + flyCoords.radius * Math.cos(flyCoords.trajectoryAngle);
-  const py = flyCoords.y + flyCoords.radius * Math.sin(flyCoords.trajectoryAngle);
+  const newDirection = Math.floor(Math.random() * 2);
+  let px = flyCoords.x;
+  let py = flyCoords.y;
+
+  // CW
+  if (newDirection === 0) {
+    px = flyCoords.x + flyCoords.radius * Math.cos(flyCoords.trajectoryAngle);
+    py = flyCoords.y + flyCoords.radius * Math.sin(flyCoords.trajectoryAngle);
+
+    flyCoords = {
+      ...flyCoords,
+      x: px,
+      y: py,
+    }
+  }
+
+  // CCW
+  if (newDirection === 1) {
+    py = flyCoords.y + flyCoords.radius * Math.cos(flyCoords.trajectoryAngle);
+    px = flyCoords.x + flyCoords.radius * Math.sin(flyCoords.trajectoryAngle);
+
+  }
 
   flyCoords = {
     ...flyCoords,
