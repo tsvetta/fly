@@ -3,123 +3,6 @@ const logToDatadog = (message = '', type = 'logger', options = {}) => {
   window.DD_LOGS && DD_LOGS.logger[type](message, options);
 }
 
-const screenBounds = document.getElementsByTagName('body')[0].getBoundingClientRect();
-
-let flyCoords = {
-  x: 200,
-  y: 200,
-  radius: 100,
-  scale: 1,
-  trajectoryAngle: 0,
-  rotationAngle: 0,
-  direction: null,
-  atBound: false,
-};
-
-let delta = 100;
-let minDistance = delta + 50;
-
-const changeTrajectory = (coords) => {
-  const px = coords.x + coords.radius * Math.cos(coords.trajectoryAngle);
-  const py = coords.y + coords.radius * Math.sin(coords.trajectoryAngle);
-  const newRadius = Math.round(Math.random() * 100);
-
-  return {
-    ...coords,
-    radius: newRadius,
-    x: px,
-    y: py,
-  }
-}
-
-// const changeRotation = (coords) => {
-//   const newRotationAngle = (coords.rotationAngle * -10 + Math.PI / 360) % (Math.PI * 2);
-//   // Math.sin(coords.trajectoryAngle) * 360;
-
-
-//   console.log('trajectoryAngle', coords.trajectoryAngle);
-//   console.log('newRotationAngle', newRotationAngle * -100);
-
-//   return {
-//     ...coords,
-//     rotationAngle: newRotationAngle * 100,
-//   }
-// }
-
-const goLeft = (coords) => () => {
-  const atBound = coords.x <= minDistance;
-  return {
-      ...coords,
-      direction: 'left',
-      x: atBound ? minDistance : coords.x - delta,
-      atBound,
-    };
-  };
-
-const goRight = (coords) => () => {
-  const atBound = coords.x >= screenBounds.width - minDistance;
-  return {
-      ...coords,
-      direction: 'right',
-      x: atBound ? screenBounds.width - minDistance : coords.x + delta,
-      atBound,
-    };
-  };
-
-const goTop = (coords) => () => {
-  const atBound = coords.y <= minDistance;
-  return {
-      ...coords,
-      direction: 'top',
-      y: coords.y <= minDistance ? minDistance : coords.y - delta,
-      atBound,
-    };
-  };
-
-const goBottom = (coords) => () => {
-  const atBound = coords.y >= screenBounds.height - minDistance;
-  return {
-      ...coords,
-      direction: 'bottom',
-      y: atBound ? screenBounds.height - minDistance : coords.y + delta,
-      atBound,
-    };
-  };
-
-const directions = (coords) => ({
-  left: goLeft(coords),
-  right: goRight(coords),
-  top: goTop(coords),
-  bottom: goBottom(coords),
-});
-
-const changeDirection = (coords) => {
-  const chanceOfNotChangingDirection = Math.round(Math.random() * 100);
-  const rndNewDirectionIdx = Math.floor(Math.random() * 4);
-  const directionFnIndex = 1;
-
-  if (coords.atBound === true) {
-    const directionsWithoutCurrentDirection = { ...directions(coords) };
-    delete directionsWithoutCurrentDirection[coords.direction];
-    const rndFilteredDirectionIdx = Math.floor(Math.random()* 3);
-
-    return Object.entries(directionsWithoutCurrentDirection)[rndFilteredDirectionIdx][directionFnIndex];
-  }
-
-  const firstMove = coords.direction === null;
-  const luckyChance = chanceOfNotChangingDirection <= 15;
-  if (firstMove || luckyChance) {
-    return Object.entries(directions(coords))[rndNewDirectionIdx][directionFnIndex];
-  }
-
-  // return the same direction
-  return directions(coords)[coords.direction];
-}
-
-const setFlyCoords = (f, c) => {
-  f.style.transform = `translate3d(${c.x}px, ${c.y}px, 0) scale(${c.scale}) rotate(${c.rotationAngle}deg)`;
-}
-
 const logConsoleData = (name, data) => {
   // console.clear()
   console.group(name);
@@ -127,20 +10,131 @@ const logConsoleData = (name, data) => {
   console.groupEnd();
 }
 
-const moveFly = (flyNode) => () => {
-  flyCoords = changeDirection(flyCoords)();
-  flyCoords.trajectoryAngle = (flyCoords.trajectoryAngle * 10 + Math.PI / 360) % (Math.PI * 2);
-  flyCoords = changeTrajectory(flyCoords);
-  // flyCoords = changeRotation(flyCoords)
+const screenBounds = document.getElementsByTagName('body')[0].getBoundingClientRect();
 
-  setFlyCoords(flyNode, flyCoords);
+let flyCoords = {
+  x: 200,
+  y: 200,
+  radius: 10,
+  scale: 1,
+  trajectoryAngle: 0,
+  rotationAngle: 0, // from 0 to Math.PI * 2
+  direction: null,
+  atBound: false,
+};
+
+let DELTA = 100;
+let MIN_DISTANCE = DELTA + 50;
+let SCALE_INDEX = 10;
+const LUCK_INDEX = 15;
+
+const goLeft = (coords) => () => {
+  const atBound = coords.x <= MIN_DISTANCE;
+  return {
+      ...coords,
+      direction: 'left',
+      x: atBound ? MIN_DISTANCE : coords.x - DELTA,
+      atBound,
+    };
+  };
+
+const goRight = (coords) => () => {
+  const atBound = coords.x >= screenBounds.width - MIN_DISTANCE;
+  return {
+      ...coords,
+      direction: 'right',
+      x: atBound ? screenBounds.width - MIN_DISTANCE : coords.x + DELTA,
+      atBound,
+    };
+  };
+
+const goTop = (coords) => () => {
+  const atBound = coords.y <= MIN_DISTANCE;
+  return {
+      ...coords,
+      direction: 'top',
+      y: coords.y <= MIN_DISTANCE ? MIN_DISTANCE : coords.y - DELTA,
+      atBound,
+    };
+  };
+
+const goBottom = (coords) => () => {
+  const atBound = coords.y >= screenBounds.height - MIN_DISTANCE;
+  return {
+      ...coords,
+      direction: 'bottom',
+      y: atBound ? screenBounds.height - MIN_DISTANCE : coords.y + DELTA,
+      atBound,
+    };
+  };
+
+const DIRECTIONS_COUNT = 4;
+const DIRECTION_FN_INDEX = 1;
+const directions = (coords) => ({
+  left: goLeft(coords),
+  right: goRight(coords),
+  top: goTop(coords),
+  bottom: goBottom(coords),
+});
+
+
+const setFlyCoords = (f, c) => {
+  f.style.transform = `translate3d(${c.x}px, ${c.y}px, 0) scale(${c.scale}) rotate(${c.rotationAngle}deg)`;
 }
 
-const scaleFly = (flyNode) => () => {
-  flyCoords.scale = (flyCoords.scale * 5 + Math.PI / 360) % (Math.PI * 1.1);
+const changeDirection = () => {
+  const chanceOfNotChangingDirection = Math.round(Math.random() * 100);
+  const rndNewDirectionIdx = Math.floor(Math.random() * DIRECTIONS_COUNT);
+
+
+  if (flyCoords.atBound === true) {
+    const directionsWithoutCurrentDirection = { ...directions(flyCoords) };
+    delete directionsWithoutCurrentDirection[flyCoords.direction];
+    const rndFilteredDirectionIdx = Math.floor(Math.random()* 3);
+
+    flyCoords = Object.entries(directionsWithoutCurrentDirection)[rndFilteredDirectionIdx][DIRECTION_FN_INDEX]();
+  }
+
+  const firstMove = flyCoords.direction === null;
+  const luckyChance = chanceOfNotChangingDirection <= LUCK_INDEX;
+  if (firstMove || luckyChance) {
+    flyCoords = Object.entries(directions(flyCoords))[rndNewDirectionIdx][DIRECTION_FN_INDEX]();
+  }
+
+  // return the same direction
+  flyCoords = directions(flyCoords)[flyCoords.direction]();
+}
+
+const scaleFly = () => {
+  flyCoords.scale = (flyCoords.scale * SCALE_INDEX + Math.PI / 360) % Math.PI;
 
   logConsoleData('Coordinates:', flyCoords);
+}
 
+const changeTrajectory = () => {
+  const px = flyCoords.x + flyCoords.radius * Math.cos(flyCoords.trajectoryAngle);
+  const py = flyCoords.y + flyCoords.radius * Math.sin(flyCoords.trajectoryAngle);
+
+  flyCoords = {
+    ...flyCoords,
+    x: px,
+    y: py,
+  }
+}
+
+const rotate = () => {
+  const newTrajectoryAngle = (flyCoords.trajectoryAngle + Math.PI / 360) % (Math.PI * 2);
+  const newRadius = Math.round(Math.random() * 25);
+
+  flyCoords = {
+    ...flyCoords,
+    radius: newRadius,
+    trajectoryAngle: newTrajectoryAngle,
+  }
+}
+
+
+const moveFly = (flyNode) => () => {
   setFlyCoords(flyNode, flyCoords);
 }
 
@@ -149,8 +143,11 @@ const flyFlies = () => {
 
   setFlyCoords(fly, flyCoords)
 
+  const directionInterval = setInterval(changeDirection, 350);
+  const scalingInterval = setInterval(scaleFly, 500);
+  const trajectoryInterval = setInterval(changeTrajectory, 20);
+  const rotationIntervar = setInterval(rotate, 5);
   const flyingInterval = setInterval(moveFly(fly), 150);
-  const scalingInterval = setInterval(scaleFly(fly), 350);
 
   logToDatadog('Fly is flying!', 'info');
 
