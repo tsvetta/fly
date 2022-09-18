@@ -1,47 +1,71 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="icon" type="image/x-icon" href="./fly.png">
-  <title>Fly</title>
-  <style>
-    html, body {
-      height: 100%;
-      padding: 0;
-      margin: 0;
-    }
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/x-icon" href="./fly.png" />
+    <title>Fly</title>
+    <style>
+      html,
+      body {
+        height: 100%;
+        padding: 0;
+        margin: 0;
+      }
 
-    body {
-      background-image: url('./room.jpg');
-      background-repeat: no-repeat;
-      background-attachment: fixed;
-      background-size: cover;
-      background-position: center;
-    }
+      body {
+        background-image: url("./room.jpg");
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        background-size: cover;
+        background-position: center;
+      }
 
-    #ceiling {
-      position: relative;
-      height: 100%;
-    }
+      #ceiling {
+        position: relative;
+        height: 100%;
+      }
 
-    #fly {
-      position: absolute;
-      background-color: transparent;
-      height: 15px;
-      width: 17px;
-      transition: transform .5s linear;
-      background-image: url('./fly.png');
-      background-repeat: no-repeat;
-      background-size: contain;
-    }
-  </style>
-</head>
-<body>
-  <div id="ceiling">
-    <div id="fly" style=""></div>
-  </div>
-  <script src="./index.js"></script>
-</body>
+      #fly {
+        position: absolute;
+        background-color: transparent;
+        height: 15px;
+        width: 17px;
+        transition: transform 0.5s linear;
+        background-image: url("./fly.png");
+        background-repeat: no-repeat;
+        background-size: contain;
+      }
+    </style>
+
+    <script
+      src="https://www.datadoghq-browser-agent.com/datadog-rum-v4.js"
+      type="text/javascript"
+    ></script>
+    <script>
+      window.DD_RUM &&
+        window.DD_RUM.init({
+          clientToken: "pubea56db0a040453d8e504233c92bce736",
+          applicationId: "48c5af3f-be55-4ee2-8d05-5c0cd2088249",
+          site: "datadoghq.eu",
+          service: "fly",
+
+          // Specify a version number to identify the deployed version of your application in Datadog
+          // version: '1.0.0',
+          sampleRate: 100,
+          premiumSampleRate: 100,
+          trackInteractions: true,
+          defaultPrivacyLevel: "mask-user-input",
+        });
+
+      window.DD_RUM && window.DD_RUM.startSessionReplayRecording();
+    </script>
+  </head>
+  <body>
+    <div id="ceiling">
+      <div id="fly" style=""></div>
+    </div>
+    <script src="./index.js"></script>
+  </body>
 </html>
