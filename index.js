@@ -147,7 +147,7 @@ const flyFlies = () => {
   const flyingInterval = setInterval(moveFly(fly), 150);
   const scalingInterval = setInterval(scaleFly(fly), 350);
 
-  // setTimeout(() => {
+  // const timer = setTimeout(() => {
   //   clearInterval(flyingInterval);
   //   clearInterval(scalingInterval);
   // }, 10000);
